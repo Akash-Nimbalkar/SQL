@@ -1,0 +1,124 @@
+CREATE TABLE IF NOT EXISTS ADDRESS
+(
+    ADDRESS_ID       VARCHAR(20) PRIMARY KEY
+  , STREET           VARCHAR(250)
+  , CITY             VARCHAR(100)
+  , STATE            VARCHAR(100)
+  , COUNTRY          VARCHAR(100)
+);
+
+CREATE TABLE IF NOT EXISTS SCHOOL
+(
+    SCHOOL_ID         VARCHAR(20) PRIMARY KEY
+  , SCHOOL_NAME       VARCHAR(100) NOT NULL
+  , EDUCATION_BOARD   VARCHAR(80)
+  , ADDRESS_ID        VARCHAR(20)
+  , CONSTRAINT FK_SCHOOL_ADDR FOREIGN KEY(ADDRESS_ID) REFERENCES ADDRESS(ADDRESS_ID)
+);
+
+CREATE TABLE IF NOT EXISTS STAFF
+(
+    STAFF_ID         VARCHAR(20)
+  , STAFF_TYPE       VARCHAR(30)
+  , SCHOOL_ID        VARCHAR(20)
+  , FIRST_NAME       VARCHAR(100) NOT NULL
+  , LAST_NAME        VARCHAR(100) NOT NULL
+  , AGE              INT
+  , DOB              DATE
+  , GENDER           VARCHAR(10) CHECK (GENDER IN ('M', 'F'))
+  , JOIN_DATE        DATE
+  , ADDRESS_ID       VARCHAR(20)
+  , CONSTRAINT PK_STAFF PRIMARY KEY(STAFF_ID)
+  , CONSTRAINT FK_STAFF_SCHL FOREIGN KEY(SCHOOL_ID) REFERENCES SCHOOL(SCHOOL_ID)
+  , CONSTRAINT FK_STAFF_ADDR FOREIGN KEY(ADDRESS_ID) REFERENCES ADDRESS(ADDRESS_ID)
+);
+
+INSERT INTO ADDRESS (ADDRESS_ID, STREET, CITY, STATE, COUNTRY) VALUES
+('ADDR001', '123 Main St', 'Springfield', 'IL', 'USA'),
+('ADDR002', '456 Oak Ave', 'Lincoln', 'NE', 'USA'),
+('ADDR003', '789 Pine Blvd', 'Madison', 'WI', 'USA'),
+('ADDR004', '321 Maple Dr', 'Columbus', 'OH', 'USA'),
+('ADDR005', '654 Cedar Ct', 'Atlanta', 'GA', 'USA');
+
+INSERT INTO SCHOOL (SCHOOL_ID, SCHOOL_NAME, EDUCATION_BOARD, ADDRESS_ID) VALUES
+('SCH001', 'Green Valley High School', 'State Board', 'ADDR001'),
+('SCH002', 'Sunnydale Academy', 'National Board', 'ADDR002'),
+('SCH003', 'Riverdale Secondary School', 'International Board', 'ADDR003'),
+('SCH004', 'Hilltop Primary School', 'State Board', 'ADDR004'),
+('SCH005', 'Oceanview High School', 'National Board', 'ADDR005');
+
+INSERT INTO STAFF (STAFF_ID, STAFF_TYPE, SCHOOL_ID, FIRST_NAME, LAST_NAME, AGE, DOB, GENDER, JOIN_DATE, ADDRESS_ID) VALUES
+('STF001', 'Teacher', 'SCH001', 'Alice', 'Smith', 30, '1993-05-15', 'F', '2020-08-01', 'ADDR001'),
+('STF002', 'Principal', 'SCH002', 'John', 'Doe', 45, '1978-02-20', 'M', '2018-07-15', 'ADDR002'),
+('STF003', 'Counselor', 'SCH003', 'Emily', 'Johnson', 35, '1988-11-30', 'F', '2019-09-10', 'ADDR003'),
+('STF004', 'Teacher', 'SCH004', 'Michael', 'Brown', 29, '1994-03-25', 'M', '2021-01-05', 'ADDR004'),
+('STF005', 'Librarian', 'SCH005', 'Sarah', 'Davis', 40, '1983-07-12', 'F', '2017-05-20', 'ADDR005');
+COMMIT;
+
+SELECT * FROM ADDRESS;
+SELECT * FROM SCHOOL;
+SELECT * FROM STAFF;
+
+INSERT INTO STAFF (STAFF_ID, STAFF_TYPE, SCHOOL_ID, FIRST_NAME, LAST_NAME, AGE, DOB, GENDER, JOIN_DATE, ADDRESS_ID) VALUES
+('STF007', 'Administrator', 'SCH003', 'PRAMILA', 'JOSHI', 38, '1991-02-05', 'Female', '2022-01-05', 'ADDR002');
+
+INSERT INTO STAFF (STAFF_ID, STAFF_TYPE, SCHOOL_ID, FIRST_NAME, LAST_NAME, AGE, DOB, GENDER, JOIN_DATE, ADDRESS_ID) VALUES
+('STF011', 'Administrator', 'SCH003', NULL, 'JOSHI', 38, '1991-02-05', 'Female', '2022-01-05', 'ADDR002');
+
+--- Ckecking foreign key constraint of address 
+INSERT INTO STAFF (STAFF_ID, STAFF_TYPE, SCHOOL_ID, FIRST_NAME, LAST_NAME, AGE, DOB, GENDER, JOIN_DATE, ADDRESS_ID) VALUES
+('STF011', 'Administrator', 'SCH003', 'Rani', 'JOSHI', 38, '1991-02-05', 'Female', '2022-01-05', 'ADDR010');
+
+-- DDL COMMANDS
+
+--1. Drop the table (Drop deletes database object)
+DROP TABLE STAFF;
+
+--2. Drop a column
+ALTER TABLE STAFF DROP COLUMN JOIN_DATE;
+SELECT * FROM STAFF;
+
+-- 3.Change datatype of column
+ALTER TABLE STAFF ALTER COLUMN AGE TYPE VARCHAR(5);
+
+-- 4. Rename the table
+ALTER TABLE STAFF RENAME TO STAFF_NEW;
+SELECT * FROM STAFF_NEW;
+
+-- 5. Rename the column 
+ALTER TABLE STAFF_NEW RENAME FIRST_NAME TO INITIAL_NAME;
+
+-- 6. Add Constraint to existing table 
+ALTER TABLE STAFF_NEW ADD CONSTRAINT UNQ_STF UNIQUE(STAFF_TYPE);
+
+DELETE FROM ADDRESS WHERE COUNTRY='USA';
+DROP TABLE ADDRESS;
+
+
+-- DML Commands
+
+--1.Multiple ways to insert records in the table
+
+INSERT INTO ADDRESS (ADDRESS_ID, STREET, CITY, STATE, COUNTRY) VALUES ('ADR1011', '44940 Bluesten Circle', 'Baton Rouge', 'Louisiana', 'United States'):
+
+INSERT INTO ADDRESS VALUES ('ADR1012', '029 Kropf Point', 'Richmond", "Virginia', 'United States');
+
+INSERT INTO ADDRESS VALUES
+('ADR1003', '96 Jay Road', 'Dallas', 'Texas', 'United States'),
+('ADR1004', '15 Harbort Lane', 'Roanoke', 'Virginia', 'United States'),
+('ADR1005', '3 Vermont Plaza', 'Atlanta', 'Georgia', 'United States'),
+('ADR1006', '55 Sycanore Trail', 'Seattle', 'Washington', 'United States'); 
+
+--2.Update records
+
+UPDATE ADDRESS SET COUNTRY='INDIA' WHERE ADDRESS_ID = 'ADDR003';
+SELECT * FROM ADDRESS;
+
+
+UPDATE ADDRESS SET COUNTRY='INDIA', CITY='PUNE' WHERE ADDRESS_ID = 'ADDR005';
+
+--3. Delete records
+DELETE FROM ADDRESS WHERE CITY='PUNE';
+
+-- To delete all records from table
+DELETE FROM ADDRESS;
